@@ -1,0 +1,7 @@
+base4<-read.csv("C:/Users/ALUMNO/Documents/Des2006-20018.csv") base4ts <- ts (base4, start=2006, end=2018, frequency=4) tdes<- decompose(base4ts) plot(tdes) tdesmult<- decompose(base4ts, type= "mult") 
+plot(tdesmult) 
+names(tdes) 
+tdes$trend tdes$seasonal tdes$random 
+suma<- tdes$trend + tdes$seasonal+ tdes$random 
+suma 
+plot(suma)
