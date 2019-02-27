@@ -1,0 +1,12 @@
+enoeok<-read.csv("C:/Users/ALUMNO/Documents/enoeok.csv") 
+enoeok 
+xbarra<-mean(enoeok$X10.2..Tasa.de.desocupación) 
+xbarra 
+ybarra<-mean(enoeok$X10.5..Tasa.de.trabajo.asalariado) 
+ybarra 
+cova<-sum((enoeok$X10.2..Tasa.de.desocupación-xbarra)*(enoeok$X10.5..Tasa.de.trabajo.asalariado-ybarra))/55 
+cova 
+corr<- cova/(sqrt(var(enoeok$X10.2..Tasa.de.desocupación)*var(enoeok$X10.5..Tasa.de.trabajo.asalariado))) 
+corr 
+cov(enoeok$X10.2..Tasa.de.desocupación,enoeok$X10.5..Tasa.de.trabajo.asalariado) 
+cor(enoeok$X10.2..Tasa.de.desocupación,enoeok$X10.5..Tasa.de.trabajo.asalariado)
