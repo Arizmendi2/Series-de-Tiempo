@@ -1,0 +1,38 @@
+#......suavizamiento...............
+pib<-read.csv("C:/Users/ALUMNO/Documents/pib.csv")
+pibts<-ts(pib, start = 1961, end = 2017, frequency = 1)
+autoplot(pibts)
+mod1<- ses(pibts,alpha=0.1, initial="simple", h=8)
+mod2<- ses(pibts,alpha=0.3, initial="simple", h=8)
+mod3<- ses(pibts,alpha=0.9, h=8)
+plot(mod1, ylab = "pib",
+     xlab="año", main="Pib", type="o")
+lines(fitted(mod1), col="brown", type="o")
+lines(fitted(mod2), col="blue", type="o")
+lines(fitted(mod3), col="green", type="o")
+legend("topleft", lty=1, col=c(1, "blue", "red", "green"),
+       c("data", expression (alpha==0.1), expression (alpha==0.3),
+         expression (alpha==0.9)), pch = 1)
+#en el plot solo grafico la serie normal y ya con las lines pogo los valos ajustados de
+#cada modelo y ya le pongo en color el estilo de la lnea, con legend solo pongo el cuadro
+#de la grafica le digo a donde lo quiero y despues pongo el color de las lineas
+#con su respectivo nombre
+
+
+#.........ejercicio...........
+#con la funcion window separen la serie del pib en datos de entrenamiento y datos
+#de prueba (20%) y graficar los modelos solo en lo que corresponde a los datos
+#prueba de los valores ajustados a los 3 modelos
+pibw<-window(pibts, start=2005, end= 2017)
+autoplot(pibw)
+mod1<- ses(pibw,alpha=0.1, initial="simple", h=8)
+mod2<- ses(pibw,alpha=0.3, initial="simple", h=8)
+mod3<- ses(pibw,alpha=0.9, h=8)
+plot(mod1, ylab = "pib",
+     xlab="año", main="Pib", type="o")
+lines(fitted(mod1), col="brown", type="o")
+lines(fitted(mod2), col="blue", type="o")
+lines(fitted(mod3), col="green", type="o")
+legend("topleft", lty=1, col=c(1, "blue", "red", "green"),
+       c("data", expression (alpha==0.1), expression (alpha==0.3),
+         expression (alpha==0.9)), pch = 1)
