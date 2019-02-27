@@ -1,0 +1,21 @@
+Python 3.7.2 (tags/v3.7.2:9a3ffc0492, Dec 23 2018, 22:20:52) [MSC v.1916 32 bit (Intel)] on win32 Type "help", "copyright", "credits" or "license()" for more information.​
+
+nom1="Alejandro"​ 
+nom2="Laura"​ 
+nom3="Catalina"​ 
+nom4="Francisco"​ 
+prom1=83​ 
+prom2=76​ 
+prom3=80​ 
+prom4=81​ 
+print(nom1,nom2,nom3,nom4)​ 
+Alejandro Laura Catalina Francisco​ 
+print (prom1,prom2,prom3,prom4)​ 
+83 76 80 81​ 
+import pandas as pd​ d={'NOMBRES': [nom1,nom2,nom3,nom4], 'PROMEDIOS':[prom1,prom2,prom3,prom4]}​ 
+df=pd.DataFrame(data=d)
+
+Ejercicio matriz ​
+
+matriz=pandas.read_csv('C:\Users\alejo\OneDrive\Documentos\Series de Tiempo')​ 
+print(matriz)
