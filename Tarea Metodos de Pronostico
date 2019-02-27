@@ -1,0 +1,12 @@
+#tarea: metodos de pronostico pib trimestral 
+PIB<-read.csv("C:/Users/alejo/OneDrive/Documentos/pibm.csv") 
+pibts<-ts(PIB, start = 1993, end = 2017, frequency = 4) 
+plot(pibts) 
+pib2<-window(pibts,start=2000, end=c(2015,4)) 
+plot(pib2) pib2 autoplot(pib2)+ 
+autolayer(meanf(pib2,h=15),series = "media", PI=FALSE) + 
+autolayer(naive(pib2,h=15),series = "ingenuo", PI=FALSE)+ 
+autolayer(snaive(pib2,h=15),series = "ingenuo estacional", PI=FALSE)+ 
+autolayer(rwf(pib2,h=15, drift = T),series = "deriva", PI=FALSE)+ 
+ggtitle("Pronostico PIB México Trimestral")+ xlab("año")+ 
+ylab("PIB a precios de mercado")+ guides(colour=guide_legend(title = "pronostico")
