@@ -1,0 +1,43 @@
+install.packages("ggplot2") 
+require(ggplot2) 
+install.packages("forecast") 
+require("forecast") 
+install.packages("fpp2") 
+require(fpp2) 
+install.packages("installr") 
+library(installr) 
+updateR() 
+version 
+netflix<-read.csv("C:/Users/Alumno-H13/Documents/net.csv") 
+netst<-ts(netflix,start=2018, frequency = 252) 
+plot(netst) 
+#metodo de la media 
+meanf (st,h) 
+media<-meanf(netst, 20) 
+plot(media) 
+#metodo del ingenuo 
+ingenuo<- naive(netst,20) 
+plot(ingenuo) 
+ingenuo 
+#metodo del ingenuo estacional 
+ingesta<-snaive(netst,20) 
+#toma los primneros 20 periodos y los repite 
+plot(ingesta) 
+#metodo de la deriva 
+deriv<- rwf(netst,20,drift = TRUE) 
+plot(deriv) 
+deriv
+
+#ejemplo, la fincion window es para cortar una serie 
+#PI PARA QUE SE METAN LAS 4 GRAFICAS EN UNA SOLA 
+cerveza2<- window(ausbeer,start=1992, end=c(2007,4)) 
+cerveza2 help("ausbeer") 
+autoplot(cerveza2) + 
+autolayer(meanf(cerveza2, h=11),series= "media", PI=FALSE) + 
+autolayer(naive(cerveza2, h=11),series= "INGENUO", PI=FALSE) + 
+autolayer(snaive(cerveza2, h=11),series= "INGENUO ESTACIONAL", PI=FALSE) + 
+autolayer(rwf(cerveza2, h=11, drift = T),series= "INGENUO ESTACIONAL", PI=FALSE) + 
+ggtitle("pronosticos de produccion de cerveza") + xlab("Año") + ylab("miles de litros") + 
+guides(colour=guide_legend(title = "pronostico"))
+
+POR LA GRAFICA SE VE QUE EL COMPONENTE INGENUO ESTACIONAL ES EL QUE MEJOR SE ADECUA PARA EL PRONOSTICO
