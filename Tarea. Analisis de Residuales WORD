@@ -1,0 +1,67 @@
+#poblacion en mexico 
+pob<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/poblacion.csv") 
+pobst<-ts(pob,start=1960, end=2017, frequency = 1) 
+plot(pobst) 
+ts.plot(pobst,xlab="años",ylab="poblacion", main="Poblacion en México",lwd=2, col= "blue") 
+pobst 
+#pronostico para la serie 
+autoplot(pobst)+ autolayer(meanf(pobst,h=15),series = "media", PI=FALSE) + 
+autolayer(naive(pobst,h=15),series = "ingenuo", PI=FALSE)+ 
+autolayer(snaive(pobst,h=15),series = "ingenuo estacional", PI=FALSE)+ 
+autolayer(rwf(pobst,h=15, drift = T),series = "deriva", PI=FALSE)+ 
+ggtitle("Pronostico Poblacion en México")+ xlab("año")+ ylab("poblacion")+ 
+guides(colour=guide_legend(title = "pronostico")) 
+#mejor metodo de pronostico 
+deri<- rwf(pobst,h=15, drift = T) 
+autoplot(deri, xlab="años", ylab= "poblacion")
+#analisis de residuales 
+res1<- residuals(deri) 
+autoplot(res1) 
+gghistogram(res1) 
+ggAcf(res1)
+
+#%CRECIMNETO PIB 
+pib<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/pib.csv") 
+pibst<-ts(pib,start=1961, end=2017, frequency = 1) 
+plot(pibst) 
+ts.plot(pibst,xlab="años",ylab="crecimiento", main="% PIB en México",lwd=2, col= "blue") 
+pibst 
+#pronostico para la serie 
+autoplot(pibst)+ autolayer(meanf(pibst,h=15),series = "media", PI=FALSE) + 
+autolayer(naive(pibst,h=15),series = "ingenuo", PI=FALSE)+ 
+autolayer(snaive(pibst,h=15),series = "ingenuo estacional", PI=FALSE)+ 
+autolayer(rwf(pibst,h=15, drift = T),series = "deriva", PI=FALSE)+ 
+ggtitle("%Crecimiento PIB en México")+ xlab("año")+ ylab("% crecimiento")+ 
+guides(colour=guide_legend(title = "pronostico")) 
+#mejor metodo de pronostico 
+deri1<- rwf(pibst,h=15, drift = T) 
+autoplot(deri1, xlab="años", ylab= "%crecimiento") 
+#analisis de residuales 
+res2<- residuals(deri1) 
+autoplot(res2) 
+gghistogram(res2) 
+ggAcf(res2)
+
+#Televisa 
+tel<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/televisa.csv") 
+telst<-ts(pib,start=2018, end=2019, frequency = 272) 
+plot(telst) 
+ts.plot(telst,xlab="tiempo",ylab="precio", main="Precios de Cierre Televisa",lwd=3, col= "blue") 
+pibst 
+#pronostico para la serie 
+autoplot(telst)+ 
+autolayer(meanf(telst,h=15),series = "media", PI=FALSE) + 
+autolayer(naive(telst,h=15),series = "ingenuo", PI=FALSE)+ 
+autolayer(snaive(telst,h=15),series = "ingenuo estacional", PI=FALSE)+ 
+autolayer(rwf(telst,h=15, drift = T),series = "deriva", PI=FALSE)+ 
+ggtitle("Precios de Cierre Televisa")+ xlab("periodo")+ ylab("Precios de Cierre")+ 
+guides(colour=guide_legend(title = "pronostico")) 
+#mejor metodo de pronostico 
+deri2<- rwf(telst,h=15, drift = T) 
+autoplot(deri2, xlab="periodo", ylab= "precios de cierre") 
+#analisis de residuales 
+res3<- residuals(deri2) 
+autoplot(res3) 
+gghistogram(res3) 
+ggAcf(res3) 
+res3
