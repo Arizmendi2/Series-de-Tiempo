@@ -1,0 +1,29 @@
+#Metodos para obtener residuales
+  help("goog200")
+  pronos<-naive(goog200)
+res1<-residuals(naive(goog200))
+names(pronos)
+autoplot(goog200)
+#graficar series
+autoplot(res1)
+#histograma para ver la distribucion de los residuales
+gghistogram(res1)
+#por la forma que tiene vemos que no se distribuye normal
+#ahora vamos a ver que los residuos no essten correlacionados
+ggAcf(res1)
+#las forenteras azules es para ver si estan correlacinados, si pasan estan autocorrelacionados
+
+
+#ejemplo de poblacion de mexico para residuales
+pob<-read.csv("C:/Users/ALUMNO/Documents/poblacion en mexico.csv")
+pobts<-ts(pob, start = 1960, end= 2017, frequency = 1)
+plot(pobts)
+pobts
+#pronostico para la serie
+nai<-rwf(pobts,h=10,drift = T)
+autoplot(nai)
+#analisis de residuales
+res2<-residuals(nai)
+autoplot(res2)
+gghistogram(res2)
+ggAcf(res2)
