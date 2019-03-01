@@ -1,7 +1,35 @@
-base4<-read.csv("C:/Users/ALUMNO/Documents/Des2006-20018.csv") base4ts <- ts (base4, start=2006, end=2018, frequency=4) tdes<- decompose(base4ts) plot(tdes) tdesmult<- decompose(base4ts, type= "mult") 
-plot(tdesmult) 
-names(tdes) 
-tdes$trend tdes$seasonal tdes$random 
-suma<- tdes$trend + tdes$seasonal+ tdes$random 
-suma 
+#Descomponer una serie de tiempo
+base3<-read.csv("C:/Users/ALUMNO/Documents/Libro11.csv")
+base3ts <- ts (base3, start=2005, end=2017, frequency=1)
+tdes<- decompose(base3ts)
+
+
+base4<-read.csv("C:/Users/ALUMNO/Documents/Des2006-20018.csv")
+base4ts <- ts (base4, start=2006, end=2018, frequency=4)
+tdes<- decompose(base4ts)
+plot(tdes)
+tdesmult<- decompose(base4ts, type= "mult")
+plot(tdesmult)
+names(tdes)
+tdes$trend
+tdes$seasonal
+tdes$random
+suma<- tdes$trend + tdes$seasonal+ tdes$random
+suma
 plot(suma)
+desbase4<- decompose(base4ts)
+
+
+america <-read.csv("C:/Users/ALUMNO/Downloads/Datos históricos AMXL_a.csv")
+amercats<- ts(america, start=2017, frequency = 120)
+plot(amercats)
+cemex<- read.csv("C:/Users/ALUMNO/Downloads/Datos históricos CMXCPO_a.csv")
+cemexts<-ts(cemex, start = 2018, frequency = 272)
+plot(cemexts)
+desamx<-decompose (amercats)
+names(desamx)
+desamx$seasonal
+sinesta<-amercats-desamx$seasonal
+sinesta
+plot(sinesta)
+
