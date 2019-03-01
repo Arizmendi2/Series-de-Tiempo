@@ -1,0 +1,37 @@
+require(forecast)
+require(ggplot2)
+require(fpp2)
+help("ausbeer")
+beer2<-window(ausbeer, start=1992, end=c(2007,4) )
+beerfit1<-meanf(beer2, h=10)
+beerfit2<-rwf(beer2, h=10)
+beerfit3<-snaive(beer2, h=10)
+autoplot(window(ausbeer, start=1992))+
+  autolayer(beerfit1, series = "media", PI= FALSE)+
+  autolayer(beerfit2, series = "ingenuo", PI= FALSE)+ 
+  autolayer(beerfit3, series = "ingenuo estacional", PI= FALSE)+
+  xlab("años")+ ylab("litros")+
+  ggtitle("Pronostico")+
+  guides(colour=guide_legend(title = "pronostico"))
+#La grafica nos muestra tres metodos de pronostico aplicados a la produccion 
+#de cerveza trimestral utilizando datos hasta finales del 2017 
+#ahora vamos a ver los errores con esa funcion, yo le voy a poner los datos que obtuvimos
+beer3<- window(ausbeer, start=2008)
+accuracy(beerfit1,beer3)
+ME     RMSE      MAE        MPE     MAPE     MASE        ACF1
+Training set   0.000 43.62858 35.23438 -0.9365102 7.886776 2.463942 -0.10915105
+Test set     -13.775 38.44724 34.82500 -3.9698659 8.283390 2.435315 -0.06905715
+
+accuracy(beerfit2,beer3)
+ME     RMSE      MAE         MPE     MAPE     MASE        ACF1
+Training set   0.4761905 65.31511 54.73016  -0.9162496 12.16415 3.827284 -0.24098292
+Test set     -51.4000000 62.69290 57.40000 -12.9549160 14.18442 4.013986 -0.06905715
+
+accuracy(beerfit3,beer3)
+ME     RMSE  MAE        MPE     MAPE      MASE       ACF1
+Training set -2.133333 16.78193 14.3 -0.5537713 3.313685 1.0000000 -0.2876333
+Test set      5.200000 14.31084 13.4  1.1475536 3.168503 0.9370629  0.1318407
+
+#entonces cuando comparamos todos los errores entonces vemos que el que se acerca 
+#al cero es el metodo 3 que es el ingenuo estacional por lo tanto es el que resultaria
+#mejor al hacer el pornostico
