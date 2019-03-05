@@ -1,0 +1,252 @@
+
+#............inflacion mensual en mexico 1997-2018......serie estacional
+inf<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/inflacion.csv") 
+infts<-ts(inf,start=1997, end=2018, frequency = 12) 
+plot(infts) 
+ts.plot(infts,xlab="años",ylab="porcentaje", main="Inflacion en México",lwd=2, col= "blue") 
+infts
+#descomposicion de la serie
+tdes<- decompose(infts)
+plot(tdes)
+tdesmult<- decompose(infts, type= "mult")
+plot(tdesmult)
+names(tdes)
+tdes$trend
+tdes$seasonal
+tdes$random
+suma<- tdes$trend + tdes$seasonal+ tdes$random
+suma
+plot(suma)
+sinesta<-infts-tdesmult$seasonal
+plot(sinesta)
+#pronostico para la serie 
+autoplot(infts)+ autolayer(meanf(infts,h=15),series = "media", PI=FALSE) + 
+    autolayer(naive(infts,h=15),series = "ingenuo", PI=FALSE)+ 
+    autolayer(snaive(infts,h=15),series = "ingenuo estacional", PI=FALSE)+ 
+    autolayer(rwf(infts,h=15, drift = T),series = "deriva", PI=FALSE)+ 
+    ggtitle("Pronostico Inflacion en México")+ xlab("año")+ ylab("Porcentaje")+ 
+    guides(colour=guide_legend(title = "pronostico")) 
+#mejor metodo de pronostico 
+deri<- snaive(infts,h=15)
+autoplot(deri, xlab="años", ylab= "porcentaje")
+#analisis de residuales 
+res1<- residuals(deri) 
+autoplot(res1) 
+gghistogram(res1) 
+ggAcf(res1)
+#suvizamiento exponencial, con datos prueba
+infw<-window(infts, start=2006, end= 2018)
+autoplot(infw)
+mod1<- ses(infw,alpha=0.1, initial="simple", h=8)
+mod2<- ses(infw,alpha=0.3, initial="simple", h=8)
+mod3<- ses(infw,alpha=0.9, h=8)
+plot(mod1, ylab = "porentaje",
+          xlab="año", main="Inflacion en México")
+lines(fitted(mod1), col="brown")
+lines(fitted(mod2), col="blue", type)
+lines(fitted(mod3), col="green", type)
+legend("topleft", lty=1, col=c(1, "blue", "red", "green"),
+              c("data", expression (alpha==0.1), expression (alpha==0.3),
+                  expression (alpha==0.9)), pch = 1)
+#suavizamiento simple
+mod1<- ses(infts,alpha=0.1, initial="simple", h=8)
+mod2<- ses(infts,alpha=0.3, initial="simple", h=8)
+mod3<- ses(infts,alpha=0.9, h=8)
+plot(mod1, ylab = "porcentaje",
+     xlab="tiempo", main="Inflacion en México")
+lines(fitted(mod1), col="brown")
+lines(fitted(mod2), col="blue")
+lines(fitted(mod3), col="green")
+legend("topleft", lty=1, col=c(1, "blue", "red", "green"),
+       c("data", expression (alpha==0.1), expression (alpha==0.3),
+         expression (alpha==0.9)), pch = 1)
+#errores de pronostico
+inf2<-window(infts, start=2015, end=2016 )
+infm<-meanf(inf2, h=20)
+infd<-rwf(inf2, h=20)
+infig<-snaive(inf2, h=20)
+autoplot(window(infts, start=2015))+
+  autolayer(infm, series = "media", PI= FALSE)+
+  autolayer(infd, series = "deriva", PI= FALSE)+ 
+  autolayer(infig, series = "ingenuo estacional", PI= FALSE)+
+  xlab("años")+ ylab("inflacion")+
+  ggtitle(" Errores de Pronostico")+
+  guides(colour=guide_legend(title = "pronostico"))
+inf3<- window(infts, start=2017)
+accuracy(infm,inf3)
+                     ME      RMSE       MAE       MPE     MAPE      MASE      
+Training set  5.124940e-17 0.3850876 0.2899412 -10.09637  89.8363 0.3960892 0.09096458        NA
+Test set     -3.174962e-01 0.9080888 0.7362022  50.45157 163.0594 1.0057273 0.15590583  1.303833
+accuracy(infd,inf3)
+ME      RMSE      MAE       MPE     MAPE     MASE
+Training set  0.06100081 0.4687113 0.382847 -31.80367 122.1059 0.523008
+Test set     -1.23153314 1.4968284 1.447120 -38.86250 436.9554 1.976913
+accuracy(infig,inf3)
+                 ME      RMSE       MAE      MPE      MAPE      MASE
+Training set  0.7320098 0.7320098 0.7320098 51.50958  51.50958 1.0000000
+Test set     -0.3630281 0.7944989 0.7199968 63.30029 198.02240 0.9835891
+
+
+
+
+#valor de UDIS historico......serie con tendencia con un poco de estacionalidad
+ud<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/udis.csv") 
+udts<-ts(ud,start=2015, end=2019, frequency = 365) 
+plot(udts) 
+ts.plot(udts,xlab="años",ylab="precio", main="Precio de Udis",lwd=2, col= "blue") 
+udts
+#descomposicion de la serie
+tdes1<- decompose(udts)
+plot(tdes1)
+tdesmult1<- decompose(udts, type= "mult")
+plot(tdesmult1)
+names(tdes1)
+tdes$trend
+tdes$seasonal
+tdes$random
+suma<- tdes1$trend + tdes1$seasonal+ tdes1$random
+suma
+plot(suma)
+sinesta<-udts-tdesmult1$seasonal
+plot(sinesta)
+#pronostico para la serie 
+autoplot(udts)+ autolayer(meanf(udts,h=360),series = "media", PI=FALSE) + 
+  autolayer(naive(udts,h=30),series = "ingenuo", PI=FALSE)+ 
+  autolayer(snaive(udts,h=360),series = "ingenuo estacional", PI=FALSE)+ 
+  autolayer(rwf(udts,h=30, drift = T),series = "deriva", PI=FALSE)+ 
+  ggtitle("Pronostico Precio de Udis")+ xlab("año")+ ylab("precio")+ 
+  guides(colour=guide_legend(title = "pronostico")) 
+#mejor metodo de pronostico 
+deri<- snaive(udts,h=360)
+autoplot(deri, xlab="años", ylab= "precio")
+#analisis de residuales 
+res1<- residuals(deri) 
+autoplot(res1) 
+gghistogram(res1) 
+ggAcf(res1)
+#suvizamiento exponencial, con datos prueba
+udw<-window(udts, start=2017, end= 2018)
+autoplot(udw)
+mod1<- ses(udw,alpha=0.1, initial="simple", h=50)
+mod2<- ses(udw,alpha=0.3, initial="simple", h=50)
+mod3<- ses(udw,alpha=0.9, h=50)
+plot(mod1, ylab = "precio",
+     xlab="año", main="Precio de Udis")
+lines(fitted(mod1), col="brown")
+lines(fitted(mod2), col="blue", type)
+lines(fitted(mod3), col="green", type)
+legend("topleft", lty=1, col=c(1, "blue", "red", "green"),
+       c("data", expression (alpha==0.1), expression (alpha==0.3),
+         expression (alpha==0.9)), pch = 1)
+#suvizamiento simple
+mod1<- ses(udts,alpha=0.1, initial="simple", h=8)
+mod2<- ses(udts,alpha=0.3, initial="simple", h=8)
+mod3<- ses(udts,alpha=0.9, h=8)
+plot(mod1, ylab = "precio",
+     xlab="tiempo", main="Precio")
+lines(fitted(mod1), col="brown")
+lines(fitted(mod2), col="blue")
+lines(fitted(mod3), col="green")
+legend("topleft", lty=1, col=c(1, "blue", "red", "green"),
+       c("data", expression (alpha==0.1), expression (alpha==0.3),
+         expression (alpha==0.9)), pch = 1)
+#errores de pronostico
+ud2<-window(udts, start=2017, end=2018 )
+udm<-meanf(ud2, h=300)
+udd<-rwf(ud2, h=300)
+udig<-snaive(ud2, h=300)
+autoplot(window(udts, start=2017))+
+  autolayer(udm, series = "media", PI= FALSE)+
+  autolayer(udd, series = "deriva", PI= FALSE)+ 
+  autolayer(udig, series = "ingenuo estacional", PI= FALSE)+
+  xlab("años")+ ylab("inflacion")+
+  ggtitle(" Errores de Pronostico")+
+  guides(colour=guide_legend(title = "pronostico"))
+ud3<- window(udts, start=2017)
+accuracy(udm,ud3)
+ME       RMSE       MAE         MPE     MAPE      MASE
+Training set -1.553588e-16 0.08621728 0.0643969 -0.02248947 1.119512 0.1732646
+Test set      2.667418e-01 0.27053578 0.2667418  4.41935506 4.419355 0.7176884
+accuracy(udd,ud3)
+ME        RMSE         MAE        MPE       MAPE        MASE
+Training set 0.001018268 0.001656209 0.001227436 0.01771496 0.02134112 0.003302506
+Test set     0.093922737 0.104210833 0.093922737 1.55248122 1.55248122 0.252706008
+accuracy(udig,ud3)
+ME     RMSE       MAE      MPE     MAPE      MASE      ACF1
+Training set 0.3716680 0.371668 0.3716680 6.262782 6.262782 1.0000000        NA
+Test set     0.2932548 0.295166 0.2932548 4.866736 4.866736 0.7890236 0.9901756
+
+
+
+
+#.....precios de elektra, serie sin patron
+elek<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/Copia de elektra.csv") 
+elekst<-ts(elek,start=2016, end=2019, frequency = 12) 
+plot(elekst) 
+ts.plot(elekst,xlab="años",ylab="precio", main="Precio de Cierre Elektra",lwd=2, col= "blue") 
+elekst 
+#descomposicion de la serie
+tdes<- decompose(elekst)
+plot(tdes)
+tdesmult<- decompose(elekst, type= "mult")
+plot(tdesmult)
+names(tdes)
+tdes$trend
+tdes$seasonal
+tdes$random
+suma<- tdes$trend + tdes$seasonal+ tdes$random
+suma
+plot(suma)
+sinesta<-elekst-tdesmult$seasonal
+#pronostico para la serie 
+autoplot(elekst)+ autolayer(meanf(elekst,h=15),series = "media", PI=FALSE) + 
+  autolayer(naive(elekst,h=15),series = "ingenuo", PI=FALSE)+ 
+autolayer(snaive(elekst,h=15),series = "ingenuo estacional", PI=FALSE)+ 
+  autolayer(rwf(elekst,h=15, drift = T),series = "deriva", PI=FALSE)+ 
+  ggtitle("Pronostico Precio de Cierre Elektra")+ xlab("año")+ ylab("precio")+ 
+  guides(colour=guide_legend(title = "pronostico")) 
+#mejor metodo de pronostico 
+deri<- snaive(elekst,h=15)
+autoplot(deri, xlab="años", ylab= "precio")
+#analisis de residuales 
+res1<- residuals(deri) 
+autoplot(res1) 
+gghistogram(res1) 
+ggAcf(res1)
+#suavizamiento
+mod1<- ses(elekst,alpha=0.1, initial="simple", h=8)
+mod2<- ses(elekst,alpha=0.3, initial="simple", h=8)
+mod3<- ses(elekst,alpha=0.9, h=8)
+plot(mod1, ylab = "precio",
+     xlab="tiempo", main="Precio de Cierre")
+lines(fitted(mod1), col="brown")
+lines(fitted(mod2), col="blue")
+lines(fitted(mod3), col="green")
+legend("topleft", lty=1, col=c(1, "blue", "red", "green"),
+       c("data", expression (alpha==0.1), expression (alpha==0.3),
+         expression (alpha==0.9)), pch = 1)
+#.....errores de pronostico..........
+elek2<-window(elekst, start=2017, end=2018 )
+elm<-meanf(elek2, h=12)
+eld<-rwf(elek2, h=12)
+elekig<-snaive(elek2, h=12)
+autoplot(window(elekst, start=2017))+
+  autolayer(elm, series = "media", PI= FALSE)+
+  autolayer(eld, series = "deriva", PI= FALSE)+ 
+  autolayer(elekig, series = "ingenuo estacional", PI= FALSE)+
+  xlab("años")+ ylab("inflacion")+
+  ggtitle(" Errores de Pronostico")+
+  guides(colour=guide_legend(title = "pronostico"))
+elek3<- window(elekst, start=2017)
+accuracy(elm,elek3)
+ME     RMSE      MAE       MPE     MAPE      MASE      ACF1
+Training set 2.185084e-15 36.29693 26.99408 -18.45244  36.4158 0.4152936 0.5768333
+Test set     1.855128e+01 82.61632 75.06410 -70.03427 112.8311 1.1548323 0.1361005
+accuracy(eld,elek3)
+ME     RMSE   MAE       MPE      MAPE      MASE        ACF1
+Training set  5.416667 25.72774 19.25   4.34425  15.00941 0.2961538 -0.02424041
+Test set     33.166667 87.07085 77.50 -49.93065 101.46134 1.1923077  0.13610048
+accuracy(elekig,elek3)
+ME     RMSE      MAE       MPE      MAPE     MASE        ACF1
+Training set 65.00000 65.00000 65.00000  59.63303  59.63303 1.000000          NA
+Test set     11.91667 75.95119 65.58333 -68.18113 104.54890 1.008974 -0.09337394
