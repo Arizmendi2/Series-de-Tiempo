@@ -1,0 +1,112 @@
+#.........examen
+require(ggplot2)
+require(fpp2)
+require(forecast)
+ausbeer
+help("ausbeer")
+#1)
+inge_esta<- snaive(ausbeer,h=5)
+autoplot(inge_esta, xlab="años", ylab= "litros")
+#analisis de residuales 
+res1<- residuals(inge_esta) 
+autoplot(res1) 
+gghistogram(res1) 
+ggAcf(res1)
+# los residuales puden tener tendencia de una normal pero sesgada a la derecha, tambien 
+#la pressencia de algunos aulyers, asi como la autocorrelacion de los datos, entonces no existe ruido blanco.
+
+#2)
+help("WWWusage")
+autoplot(WWWusage)+  
+  autolayer(naive(WWWusage,h=15),series = "ingenuo", PI=FALSE)+ 
+  autolayer(snaive(WWWusage,h=15),series = "ingenuo estacional", PI=FALSE)+ 
+  ggtitle("Pronostico de Internet por Minuto")+ xlab("tiempo")+ ylab("uso")+ 
+  guides(colour=guide_legend(title = "pronostico")) 
+#el mejor metodo es el de ingenuo estacional ya que es el que mas se asemeja a el movimiento de la serie
+#asi como tambien con el que se espera que los errores de pronostico sea menor.
+inge<- snaive(WWWusage,h=15)
+autoplot(inge, xlab="tiempo", ylab= "uso")
+#analisis de residuales 
+res1<- residuals(inge) 
+autoplot(res1) 
+
+
+help("bricksq")
+autoplot(bricksq)+  
+  autolayer(naive(bricksq,h=15),series = "ingenuo", PI=FALSE)+ 
+  autolayer(snaive(bricksq,h=15),series = "ingenuo estacional", PI=FALSE)
+esta<- snaive(WWWusage,h=15)
+res2<- residuals(esta) 
+autoplot(res2)
+#el mejor metodo es el ingenuo estacional, ya que el ingenuo proporciona un pronostico con pocos movimientos,
+#situacion que no se puede esperar por la forma de la serie.
+
+
+#3)
+#a)los buenos metodos de pronostico deberian tener residuos distribuidos normalmente_ VERDADERO...ya que
+#es uno de los supuestos que tienen que cumplir en los residuos u errores y garantizan un buen mdodelo, por ende, buenos pronosticos
+#b)Un modelo con pequeños residuos dara buenos pronósticos: FALSO, los errores son para los pronosticos.
+#c)MAPE: VERDADERO, si, ya que al aplicar una mayor penalizacion, se hace un mejor pronostico y puede minimizar los errores.
+#4) si existe ruido blanco, es por que los datos no estan autocorrelacionados, es decir el dato actual es independiente 
+#del dato anterior, incluso a manera grafica no se tien que salir las líneas de la banda y así podemos afirmar el supuesto, ya que si
+#tenemos situcion de autocorrelacion no podría llevar a una dependecia o una situacion de multicolienalidad.
+
+#6
+help("ibmclose")
+plot.ts(ibmclose)
+ibmclose
+entrena<-window(ibmclose, start=1, end=300)
+plot(entrena)
+prue<-window(ibmclose, start=301)
+plot(prue)
+
+entrena2<-window(ibmclose, start=200, end=300)
+ibmm<-meanf(entrena2, h=69)
+ibmd<-rwf(entrena2, h=69, drift = T)
+ibmig<-snaive(entrena2, h=69)
+autoplot(window(ibmclose, start=100))+
+  autolayer(ibmm, series = "media", PI= FALSE)+
+  autolayer(ibmd, series = "deriva", PI= FALSE)+ 
+  autolayer(ibmig, series = "ingenuo estacional", PI= FALSE)
+#el mejor metodo es el de la deriva, porque de alguna manera marca la tendencia para pronosticar la serie
+#pero pues en realidad no se parece elpronostico lo que se tiene en la relaidad.
+deriv<-rwf(entrena2, h=69, drift = T)
+residu<-residuals(deriv)
+plot(residu)
+accuracy(ibmm, prue)
+ME     RMSE      MAE        MPE     MAPE      MASE      ACF1
+Training set -1.234381e-14 82.32173 75.74669  -3.675229 17.99962 10.319713 0.9811613
+Test set     -6.866523e+01 71.49144 68.66523 -18.788830 18.78883  9.354936 0.9314689
+accuracy(ibmd, prue)
+ME     RMSE      MAE          MPE      MAPE     MASE      ACF1
+Training set 7.389367e-15 10.12176  7.52000 -0.008218948  1.890234 1.024523 0.0628121
+Test set     5.577536e+01 60.03170 55.77536 15.123676904 15.123677 7.598823 0.8962933
+accuracy(ibmig, prue)
+ME     RMSE      MAE        MPE     MAPE     MASE      ACF1
+Training set -1.700000 10.26353  7.34000 -0.4088114 1.854009 1.000000 0.0628121
+Test set     -3.724638 20.24810 17.02899 -1.2939174 4.668186 2.320025 0.9314689
+
+#7)
+help("hsales")
+hsales
+plot(hsales)
+entrenamiento<-window(hsales, start=1973, end=c(1993,12))
+entrenamiento
+prueba<-window(hsales, start=1994, end=1995)
+prueba
+entrena2<-window(hsales, start=1973, end=c(1993,12))
+ibmm<-meanf(entrena2, h=24)
+ibmd<-rwf(entrena2, h=24, drift = T)
+ibmig<-snaive(entrena2, h=24)
+autoplot(window(hsales, start=1993))+
+  autolayer(ibmm, series = "media", PI= FALSE)+
+  autolayer(ibmd, series = "deriva", PI= FALSE)+ 
+  autolayer(ibmig, series = "ingenuo estacional", PI= FALSE)
+#el mejor metodo es el de ingenuo estacional por lo que se ajusta el pronsotico a lo que pasa
+#en la relaidad, por lo que se espera que los errores sean menores
+ok<-snaive(entrena2, h=24)
+residu<-residuals(ok)
+plot(residu)
+ggAcf(residu)
+# no es ruido blanco, ya que los datos se salen de las lineas y nos dice que estan autocorrelacionados
+#entonces no podemos inferir ruido blanco
