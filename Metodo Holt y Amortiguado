@@ -1,0 +1,87 @@
+#metodo de holt
+require(fpp2)
+require(forecast)
+require(ggplot2)
+a1<- window(ausair, start=1990)
+prono<-holt(a1, h=5)
+autoplot(prono)
+#ejemplo amortiguado
+prono1<-holt(a1, h=15)
+prono2<-holt(a1,damped = TRUE, phi=0.9, h=15)
+prono3<-ses(a1,alpha=0.9, initial="simple", h=15)
+autoplot(a1)+
+  autolayer(prono1, series = "Holt", PI=FALSE)+
+  autolayer(prono2, series = "Amortiguado con Hold", PI=FALSE)+
+  autolayer(prono3, series = "Suavizado Exponencial", PI=FALSE)+
+    ggtitle("pronosticos")+ xlab("año")+
+    ylab("pasajeros")
+  guides(colour= guide_legend(title = "prono"))
+
+  e1<-tsCV(a1,ses,h=1)
+  e1
+  e2<-tsCV(a1,holt,h=1)
+  e2
+  e3<-tsCV(a1,holt, damped=TRUE,h=1)
+  e3
+  
+  MSE:
+    mean(e1^2, na.rm=TRUE)
+  #10.58528
+  mean(e2^2, na.rm=TRUE)
+  #6.577382
+  mean(e3^2, na.rm=TRUE)
+  #7.3861
+  #EL MAS CERCANO A CERO ES EL DE HOLT, ME QUEDO CON ESE
+
+  MAE:
+    mean(abs(e1),na.rm=TRUE)
+  #2.43008
+  mean(abs(e2),na.rm=TRUE)
+  #1.804368
+  mean(abs(e3),na.rm=TRUE)
+  #1.868162
+  #me vulevo a quedar con el de holt ya que es mas cercano a cero
+  
+#......lo mismo pero con el pib
+  pib<-read.csv("file:///C:/Users/ALUMNO/Documents/pibbbb.csv") 
+  pibst<-ts(pib,start=1980, end=2017, frequency = 1) 
+  
+  a1<- window(pibst, start=1950)
+  prono<-holt(a1, h=5)
+  autoplot(prono)
+  #ejemplo amortiguado
+  prono1<-holt(a1, h=15)
+  prono2<-holt(a1,damped = TRUE, phi=0.9, h=15)
+  prono3<-ses(a1,alpha=0.9, initial="simple", h=15)
+  autoplot(a1)+
+    autolayer(prono1, series = "Holt", PI=FALSE)+
+    autolayer(prono2, series = "Amortiguado con Hold", PI=FALSE)+
+    autolayer(prono3, series = "Suavizado Exponencial", PI=FALSE)+
+    ggtitle("pronosticos")+ xlab("año")+
+    ylab("pasajeros")
+  guides(colour= guide_legend(title = "prono"))
+  
+  e1<-tsCV(a1,ses,h=1)
+  e1
+  e2<-tsCV(a1,holt,h=1)
+  e2
+  e3<-tsCV(a1,holt, damped=TRUE,h=1)
+  e3
+  
+  MSE:
+    mean(e1^2, na.rm=TRUE)
+  #11.84145
+  mean(e2^2, na.rm=TRUE)
+  #19.36153
+  mean(e3^2, na.rm=TRUE)
+  #19.09195
+  #EL MAS CERCANO A CERO ES EL DE ses, ME QUEDO CON ESE
+  
+  MAE:
+    mean(abs(e1),na.rm=TRUE)
+  #2.43506
+  mean(abs(e2),na.rm=TRUE)
+  #3.356434
+  mean(abs(e3),na.rm=TRUE)
+  #1.130322
+  #me vulevo a quedar con el de holt amortiguado ya que es mas cercano a cero
