@@ -1,0 +1,22 @@
+#........Base Monetaria.......
+require(forecast)
+require(ggplot2)
+require(fpp2)
+mone<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/base_monetaria.csv")
+monets<-ts(mone, start = 1, end = 15, frequency = 1)
+autoplot(monets, mean="Base Monetaria")+
+  ggtitle("Base Monetaria primeros 100 días de gobierno")+ xlab("No. de Semanas")+ ylab("Base Monetaria")+ 
+  guides(colour=guide_legend(title = "Sexenios")) 
+
+calde<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/calderon.csv")
+caldets<-ts(calde, start = 1, end = 15, frequency = 1)
+peña<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/peña.csv")
+peñats<-ts(peña, start=1, end= 15, frequency=1)
+obra<-read.csv("C:/Users/alejo/OneDrive/Documentos/Series de Tiempo/obrador.csv")
+obrats<-ts(obra, start=1, end= 15, frequency=1)
+
+autoplot(caldets, PI=FALSE, type=  "b") + 
+  autolayer(peñats, PI=FALSE)+ 
+  autolayer(obrats, PI=FALSE)+ 
+  ggtitle("Base Monetaria primeros 100 día de gobierno")+ xlab("No. de Semanas")+ ylab("Base Monetaria")+ 
+  guides(colour=guide_legend(title = "Sexenios")) 
