@@ -1,0 +1,21 @@
+library(fpp2)
+#  Serie: PRECIO MENSUAL DEL COBRE (1969-2006)
+autoplot(mcopper)
+autoplot(BoxCox(mcopper, lambda =  l))
+l<- BoxCox.lambda(mcopper)
+bc<- BoxCox(mcopper,lambda = l)
+autoplot(mcopper)
+autoplot(bc)
+
+# Extra: ajuste de normalidad
+
+gghistogram(residuals(snaive(mcopper, h=20)))
+gghistogram(residuals(snaive(bc, h=20)))
+
+#  Serie: PRODUCCION MENSUAL DE GAS CANADIENSE (1960-2005)
+
+autoplot(cangas)
+autoplot(BoxCox(cangas,lambda = BoxCox.lambda(cangas)))
+  BoxCox.lambda(cangas)
+  gghistogram(residuals(snaive(cangas, h=20)))
+  gghistogram(residuals(snaive(BoxCox(cangas,lambda = BoxCox.lambda(cangas)), h=20)))
