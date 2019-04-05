@@ -1,0 +1,49 @@
+#METODOLOGIA DE PASOS PARA ARIMA
+install.packages("tseries")
+require (foreign)
+require (forecast)
+require (fpp2)
+require(fpp)
+require(tseries)
+bim<-read.csv("C:/Users/ALUMNO/Documents/BIMBO.csv")
+bimbo<-ts(bim [,2], frequency = 254,start = 2018)
+#revizar si las serie es estacionaria y con el adf.test necesitamos que el p-value sea menor a .05
+adf.test(bimbo)
+#data:  bimbo
+#Dickey-Fuller = -2.3696, Lag order = 6, p-value = 0.4202
+#entonces no pasa la prueba y la serie NO es estacionaria
+#entonces hago diferenciacion para hacerla estacionaria
+dbimts<-diff(bimbo)
+adf.test(dbimts)
+#se obtienen siguientes valores
+#Dickey-Fuller = -5.5394, Lag order = 6, p-value = 0.01
+#alternative hypothesis: stationary
+#entonces por el p-value vemos que ya se hizo estacionaria y sabemos que d=1
+#PASO 3: aplicamos los correlogramas
+par(mfrow=c(1,2))
+acf(dbimts)
+pacf(dbimts)
+#el par es para mostrar las dos graficas juntas.... con el acf y pacf intuimos valores de 
+# p y q y haces modelos propuestos
+# PROPUESTA DEL MODELO
+mod1<-Arima(dbimts, order = c(1,1,0))
+mod2<-Arima(dbimts, order = c(2,1,0))
+mod3<-Arima(dbimts, order = c(3,1,0))
+mod4<-Arima(dbimts, order = c(4,1,0))
+mod1
+#AIC=637.05   AICc=637.1   BIC=644.11
+mod2
+#AIC=610.71   AICc=610.81   BIC=621.3
+mod3
+#AIC=587.01   AICc=587.17   BIC=601.13
+mod4
+#AIC=560.1   AICc=560.34   BIC=577.75
+
+#si lo comparamos con el autoarima
+mod<-auto.arima(bimbo, seasonal = FALSE)
+mod
+#Series: bimbo 
+#ARIMA(0,1,1) 
+#Coefficients:
+#sigma^2 estimated as 0.4294:  log likelihood=-251.59
+#AIC=507.17   AICc=507.22   BIC=514.24
