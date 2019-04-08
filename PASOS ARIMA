@@ -26,18 +26,21 @@ pacf(dbimts)
 #el par es para mostrar las dos graficas juntas.... con el acf y pacf intuimos valores de 
 # p y q y haces modelos propuestos
 # PROPUESTA DEL MODELO
-mod1<-Arima(dbimts, order = c(1,1,0))
-mod2<-Arima(dbimts, order = c(2,1,0))
-mod3<-Arima(dbimts, order = c(3,1,0))
-mod4<-Arima(dbimts, order = c(4,1,0))
+#es con la serie original aunque ya sepa que el valor de d=1, por lo que solo lo pongo
+mod1<-Arima(bimbo, order = c(0,1,1))
+mod2<-Arima(bimbo, order = c(0,1,2))
+mod3<-Arima(bimbo, order = c(0,1,3))
+mod4<-Arima(bimbo, order = c(0,1,4))
 mod1
-#AIC=637.05   AICc=637.1   BIC=644.11
+#AIC=507.17   AICc=507.22   BIC=514.24
 mod2
-#AIC=610.71   AICc=610.81   BIC=621.3
+#AIC=507.75   AICc=507.85   BIC=518.35
 mod3
-#AIC=587.01   AICc=587.17   BIC=601.13
+#AIC=508.13   AICc=508.29   BIC=522.26
 mod4
-#AIC=560.1   AICc=560.34   BIC=577.75
+#AIC=509.18   AICc=509.42   BIC=526.84
+
+#por los resultados obtenidos, el AICC menor es el modelo 1 por lo que me quedaria con ese modelo
 
 #si lo comparamos con el autoarima
 mod<-auto.arima(bimbo, seasonal = FALSE)
@@ -47,3 +50,64 @@ mod
 #Coefficients:
 #sigma^2 estimated as 0.4294:  log likelihood=-251.59
 #AIC=507.17   AICc=507.22   BIC=514.24
+
+#entonces nos quedamos con el modelo 1
+#Ahora hay que verificar si los residuales son ruido blanco, con la prueba ljung Box y verificar
+#que el p-value sea mayor a 0.05, lo que indica que los residuales son ruido blanco.
+modres<-residuals(mod1)
+Box.test(modres, lag = 12, type = "Ljung-Box")
+#X-squared = 15.336, df = 12, p-value = 0.2236
+# como el p-value si es mayor a .05, entonces es ruido blanco y procedo al pronostico
+
+#PRONOSTICO DE LA SERIE
+mod11<-forecast(mod1,h=12)
+plot(forecast(mod1,h=12, include=18))
+
+
+
+#ejercicio en clase con la serie sunspots
+help("sunspots")
+plot(sunspots)
+adf.test(sunspots)
+#ya no hacemos difeenciacion por que el p-value sale muy bien
+#PASO 3: aplicamos los correlogramas
+par(mfrow=c(1,2))
+acf(sunspots)
+pacf(sunspots)
+# PROPUESTA DEL MODELO
+#es con la serie original aunque ya sepa que el valor de d=1, por lo que solo lo pongo
+mod1<-Arima(sunspots, order = c(1,0,0))
+mod2<-Arima(sunspots, order = c(2,0,0))
+mod3<-Arima(sunspots, order = c(3,0,0))
+mod4<-Arima(sunspots, order = c(4,0,0))
+mod1
+#AIC=23939.77   AICc=23939.78   BIC=23957.61
+mod2
+#AIC=23724.5   AICc=23724.51   BIC=23748.28
+mod3
+#AIC=23624.36   AICc=23624.39   BIC=23654.09
+mod4
+#AIC=23574.28   AICc=23574.31   BIC=23609.94
+
+#por los resultados obtenidos, el AICC menor es el modelo 4 por lo que me quedaria con ese modelo
+
+#si lo comparamos con el autoarima
+mod<-auto.arima(sunspots, seasonal = FALSE)
+mod
+Series: sunspots 
+ARIMA(2,1,2) 
+
+Coefficients:
+  ar1      ar2      ma1     ma2
+1.3467  -0.3963  -1.7710  0.8103
+s.e.  0.0303   0.0287   0.0205  0.0194
+
+sigma^2 estimated as 243.8:  log likelihood=-11745.5
+AIC=23500.99   AICc=23501.01   BIC=23530.71
+#entonces nos quedamos con el modelo 4
+#Ahora hay que verificar si los residuales son ruido blanco, con la prueba ljung Box y verificar
+#que el p-value sea mayor a 0.05, lo que indica que los residuales son ruido blanco.
+modres<-residuals(mod1)
+Box.test(modres, lag = 12, type = "Ljung-Box")
+#X-squared = 250.41, df = 12, p-value < 2.2e-16
+# como el p-value no es mayor a .05, entonces no es ruido blanco y no puedo proceder al pronostico
